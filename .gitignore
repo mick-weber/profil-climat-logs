@@ -3,4 +3,5 @@
 .RData
 .Ruserdata
 /logs_files/*
+!/logs_files/.gitkeep
 logs_df.rds

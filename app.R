@@ -135,7 +135,7 @@ server <- function(input, output, session) {
   observeEvent(log_df(), {
     
     saveRDS(log_df(), logs_rds_filename)
-    files_to_remove <- list.files(logs_repo, full.names = TRUE, recursive = FALSE)
+    files_to_remove <- list.files(logs_repo, pattern = "\\.json$", full.names = TRUE, recursive = FALSE)
     file.remove(files_to_remove)
     
   })
