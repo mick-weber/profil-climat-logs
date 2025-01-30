@@ -2,3 +2,5 @@
 .Rhistory
 .RData
 .Ruserdata
+/logs_files/*
+logs_df.rds
