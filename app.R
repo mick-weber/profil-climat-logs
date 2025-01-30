@@ -243,7 +243,7 @@ server <- function(input, output, session) {
   
   output$logs <- renderGirafe({
     
-    validate(need(nrow(logStats$df) > 0, "Pas de logs récupéré dans /logs_files/ !"))
+    validate(need(nrow(logStats$df) > 0, "Aucun log récupéré dans /logs_files/ ..."))
     
     # If slider range is smaller than one week : binwidth is one day, otherwise it's one week
     dynamic_binwidth <- ifelse(
@@ -304,7 +304,9 @@ server <- function(input, output, session) {
   })
   
   output$monthly_table <- renderTable({
-    validate(need(nrow(logStats$df) > 0, "Aucun logs récupéré dans /logs_files/ !"))
+    
+    validate(need(nrow(logStats$df) > 0, "Aucun log récupéré dans /logs_files/ ..."))
+    
     monthly_connections()
   })
   
@@ -312,8 +314,10 @@ server <- function(input, output, session) {
   # Table of most researched communes (over searched period)
   
   output$most_searched_communes <- renderTable({
-    validate(need(nrow(logStats$df) > 0, "Aucun logs récupéré dans /logs_files/ !"))
-
+    
+    validate(need("inputs_1-selected_communes" %in% colnames(logStats$df), "Aucune donnée de commune disponible..."))
+    validate(need(nrow(logStats$df) > 0, "Aucun log récupéré dans /logs_files/ ..."))
+    
     top_5_communes <- logStats$df |>
       dplyr::select(communes = "inputs_1-selected_communes") |> 
       dplyr::mutate(communes = map(communes, unique)) |># make sure we don't count for duplicates by session, though it's done after reading logs
@@ -326,6 +330,9 @@ server <- function(input, output, session) {
   # Table of most visited tabs (over search period)
   
   output$most_visited_tabs <- renderTable({
+    
+    validate(need("nav" %in% colnames(logStats$df), "Aucune donnée d'onglet disponible..."))
+    validate(need(nrow(logStats$df) > 0, "Aucun log récupéré dans /logs_files/ ..."))
     
     logStats$df |>
       dplyr::select(onglets = "nav") |> 
