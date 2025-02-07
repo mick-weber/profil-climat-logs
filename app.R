@@ -283,6 +283,8 @@ server <- function(input, output, session) {
   # Table of last monthly connections ----
   
   monthly_connections <- reactive({
+    req(log_df())
+    
     # Extract last 12 months of data
     last_12_months <- Sys.Date() %m-% months(12)
     
