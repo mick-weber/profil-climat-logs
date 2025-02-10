@@ -7,6 +7,7 @@ if (!require(ggplot2)) { install.packages("ggplot2", dependencies = TRUE); libra
 if (!require(ggiraph)) { install.packages("ggiraph", dependencies = TRUE); library(ggiraph) }
 if (!require(lubridate)) { install.packages("lubridate", dependencies = TRUE); library(lubridate) }
 if (!require(scales)) { install.packages("scales", dependencies = TRUE); library(scales) }
+if (!require(purrr)) { install.packages("purrr", dependencies = TRUE); library(purrr) }
 if (!require(dplyr)) { install.packages("dplyr", dependencies = TRUE); library(dplyr) }
 if (!require(tidyr)) { install.packages("tidyr", dependencies = TRUE); library(tidyr) }
 if (!require(htmltools)) { install.packages("htmltools", dependencies = TRUE); library(htmltools) }
@@ -322,7 +323,7 @@ server <- function(input, output, session) {
     
     top_5_communes <- logStats$df |>
       dplyr::select(communes = "inputs_1-selected_communes") |> 
-      dplyr::mutate(communes = map(communes, unique)) |># make sure we don't count for duplicates by session, though it's done after reading logs
+      dplyr::mutate(communes = purrr::map(communes, unique)) |># make sure we don't count for duplicates by session, though it's done after reading logs
       tidyr::unnest_longer(communes) |>   # Flatten list column
       dplyr::count(communes, name = "recherches", sort = TRUE) |>  # Count occurrences, sorted descending
       dplyr::slice_head(n = 5) 
