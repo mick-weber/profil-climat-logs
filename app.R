@@ -326,6 +326,7 @@ server <- function(input, output, session) {
       dplyr::mutate(communes = purrr::map(communes, unique)) |># make sure we don't count for duplicates by session, though it's done after reading logs
       tidyr::unnest_longer(communes) |>   # Flatten list column
       dplyr::count(communes, name = "recherches", sort = TRUE) |>  # Count occurrences, sorted descending
+      dplyr::filter(!is.na(communes)) |> 
       dplyr::slice_head(n = 5) 
     
   })
