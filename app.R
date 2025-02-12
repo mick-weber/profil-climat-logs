@@ -87,10 +87,16 @@ server <- function(input, output, session) {
   
   # If needed : init log dir and filename
   logs_repo <- "logs_files"
+  logs_latest_cronjob_date <- paste0(logs_repo, "/", "logs_latest_cronjob_date.txt")
   logs_rds_filename <- "logs_df.rds"
   
   if(!dir.exists(logs_repo)){
     dir.create(logs_repo)
+  }
+  
+  if(!file.exists(logs_latest_cronjob_date)){
+    file.create(logs_latest_cronjob_date)                                        # create if needed
+    write(Sys.time(), file = logs_latest_cronjob_date) # initialize with creation datetime
   }
   
   if(!file.exists(logs_rds_filename)){
@@ -132,7 +138,7 @@ server <- function(input, output, session) {
     unique(list.files(logs_repo))
   }
   get.files <- function() {
-    list.files(logs_repo)
+    list.files(logs_repo, pattern = "\\.json$")
   }
   
   # Keep track of changes in the logs_repo subfolder
@@ -224,8 +230,8 @@ server <- function(input, output, session) {
   
   output$latest_update <- renderUI({
     h4("Dernière importation : ",
-                format(file.info(logs_rds_filename)$mtime, "%Y-%m-%d %H:%M")
-                , align = "center")
+                format(readLines(logs_latest_cronjob_date) |> as.POSIXct(), "%Y-%m-%d %H:%M"),
+       align = "center")
   })
   
   # Render statistical values ----
